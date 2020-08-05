@@ -1,8 +1,9 @@
 <div align="center">
   <img src="https://github.com/sultan99/react-on-lambda/raw/gh-pages/logo.svg?sanitize=true" width="110" height="110"/>
+  <img src="/doc/logo.svg" width="10%" />
 </div>
 
-<img src="/doc/logo.svg" width="10%" />
+
 
 # MESSAGE-RELAY
 
