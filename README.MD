@@ -1,8 +1,4 @@
-
-<span>message-relay <span align="center"><img src="/doc/logo.svg" width="10%" /></span></span>
-
-
-# <span>message-relay <span align="center"><img src="/doc/logo.svg" width="10%" /></span></span>
+#  <span align="center"><img src="/doc/logo.svg" width="3%"/></span><span> message-relay <span align="center"><img src="/doc/logo.svg" width="3%" /></span></span>
 
 ## Présentation générale
 > *messagerelay* est une application impliquée dans l'implémentation du Pattern d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. *messagerelay* est chargée de lire (poll) les lignes de la table *outbox* et de le relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications (microservices) dans la meme transaction de base-de-données qui a permis de changer et muter leur état.
