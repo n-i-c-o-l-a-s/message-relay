@@ -1,7 +1,4 @@
-![](/doc/logo.svg "")
-
-<img src="/doc/logo.svg" width="25%" height="25%" />
-
+<img src="/doc/logo.svg" style="display: block; margin-left: auto; margin-right: auto; width: 50%;"/>
 
 # MESSAGE-RELAY
 
