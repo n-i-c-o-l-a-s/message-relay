@@ -28,9 +28,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OutboxPolling {
+public class OutboxPoller {
 
-	private static final Logger LOG = LoggerFactory.getLogger(OutboxPolling.class);
+	private static final Logger LOG = LoggerFactory.getLogger(OutboxPoller.class);
 
 	@Value("${messagerelay.kafka.bootstrapservers}")
 	private String kafkaBootstrapServers;
