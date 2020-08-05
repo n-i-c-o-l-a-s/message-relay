@@ -107,7 +107,7 @@ public class OutboxPoller {
 			}
 		});
 
-		ConsumerRecords<byte[], byte[]> consumerRecords = consumer.poll(Duration.ofMillis(1000));
+		ConsumerRecords<byte[], byte[]> consumerRecords = consumer.poll(Duration.ofMillis(2000));
 
 		consumer.assignment().stream().sorted((o1, o2) -> o1.toString().compareTo(o2.toString()))
 				.forEach(topicPartition -> {
@@ -126,7 +126,7 @@ public class OutboxPoller {
 					}
 				});
 
-		consumerRecords = consumer.poll(Duration.ofMillis(1000));
+		consumerRecords = consumer.poll(Duration.ofMillis(2000));
 
 		if (consumerRecords.count() != 0) {
 
