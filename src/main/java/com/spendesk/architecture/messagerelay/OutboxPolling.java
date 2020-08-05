@@ -118,7 +118,7 @@ public class OutboxPolling {
 
 					if (nextOffsetToFetch > 0) {
 						LOG.info(
-								"Inspecting the offset before last ({}) of partition {} in order to extract 'id' header",
+								"Inspecting the offset before last ({}) of partition {} in order to extract 'outbox_id' header",
 								nextOffsetToFetch - 1, topicPartition.partition());
 						consumer.seek(topicPartition, nextOffsetToFetch - 1);
 					} else {
@@ -154,7 +154,7 @@ public class OutboxPolling {
 
 	protected void relayMessageToKafkaTopic(Long id, byte[] key, byte[] value) {
 		List<Header> headers = new ArrayList<>();
-		headers.add(new RecordHeader("id", id.toString().getBytes()));
+		headers.add(new RecordHeader("outbox_id", id.toString().getBytes()));
 		this.messageProducer.send(new ProducerRecord<byte[], byte[]>(this.topic, null, null, key, value, headers));
 		LOG.info("id {} has been successfully relayed to topic {}", id, this.topic);
 	}
