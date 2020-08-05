@@ -1,4 +1,8 @@
-<img src="/doc/logo.svg" style="display: block; margin-left: auto; margin-right: auto; width: 15%; height: 15%;"/>
+<div align="center">
+  <img src="https://github.com/sultan99/react-on-lambda/raw/gh-pages/logo.svg?sanitize=true" width="110" height="110"/>
+</div>
+
+<img src="/doc/logo.svg" width="10%" />
 
 # MESSAGE-RELAY
 
