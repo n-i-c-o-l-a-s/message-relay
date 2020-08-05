@@ -1,4 +1,7 @@
 
+---
+<div>message-relay <div align="center"><img src="/doc/logo.svg" width="10%" /></div></div>
+---
 
 # <div>message-relay <div align="center"><img src="/doc/logo.svg" width="10%" /></div></div>
 
