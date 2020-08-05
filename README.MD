@@ -1,6 +1,6 @@
-![]( "")
+![](/doc/logo.svg "")
 
-<img src="/doc/logo.svg" width="50%" height="50%" />
+<img src="/doc/logo.svg" width="25%" height="25%" />
 
 
 # MESSAGE-RELAY
