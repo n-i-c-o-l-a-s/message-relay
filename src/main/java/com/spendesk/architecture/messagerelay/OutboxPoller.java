@@ -93,6 +93,9 @@ public class OutboxPoller {
 		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
 				org.apache.kafka.common.serialization.ByteArrayDeserializer.class);
 
+		
+		// TODO added heartbeat intervall and session timeout shortened
+		
 		final Consumer<byte[], byte[]> consumer = new KafkaConsumer<>(props);
 		consumer.subscribe(Arrays.asList(new String[] { topic }), new ConsumerRebalanceListener() {
 
@@ -133,9 +136,10 @@ public class OutboxPoller {
 			for (ConsumerRecord<byte[], byte[]> consumerRecord : consumerRecords) {
 				LOG.info("Record found: topic='{}', partition='{}', offset='{}' ", consumerRecord.topic(),
 						consumerRecord.partition(), consumerRecord.offset());
-				Long idExtractedFromKafkaRecordHeaders = Long.valueOf(consumerRecord.headers() == null ? "0"
-						: new String(consumerRecord.headers().headers("id").iterator().next().value()));
-				LOG.info("Extracted 'id' header: {}", idExtractedFromKafkaRecordHeaders);
+
+				Long idExtractedFromKafkaRecordHeaders = Long
+						.valueOf(new String(consumerRecord.headers().headers("outbox_id").iterator().next().value()));
+				LOG.info("Extracted 'outbox_id' header: {}", idExtractedFromKafkaRecordHeaders);
 				if (idExtractedFromKafkaRecordHeaders > nextIdToPollFromDatabase) {
 					nextIdToPollFromDatabase = idExtractedFromKafkaRecordHeaders;
 				}
