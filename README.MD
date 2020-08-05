@@ -1,4 +1,4 @@
-<img src="/doc/logo.svg" style="display: block; margin-left: auto; margin-right: auto; width: 50%;"/>
+<img src="/doc/logo.svg" style="display: block; margin-left: auto; margin-right: auto; width: 15%; height: 15%;"/>
 
 # MESSAGE-RELAY
 
