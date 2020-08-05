@@ -1,7 +1,7 @@
 #  <span align="center"><img src="/doc/logo.svg" width="3%"/></span><span> message-relay <span align="center"><img src="/doc/logo.svg" width="3%" /></span></span>
 
 ## Présentation générale
-> *messagerelay* est impliquée dans l'implémentation du Pattern d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. C'est une application technique et indépendante du Métier de l'entreprise ; elle est chargé de lire par intervalles de temps (*polling*) les lignes de la table *outbox* et de les relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications (microservices) dans la meme transaction de base-de-données que celle qui a permis de faire persister le chagement et la mutation de son état.
+> *messagerelay* est impliquée dans l'implémentation du Pattern d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. C'est une application technique et indépendante du Métier de l'entreprise ; elle est chargé de lire par intervalles de temps (*polling*) les lignes de la table *outbox* et de les relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications (microservices) en exploitant la meme transaction base-de-données que celle qui a permis de faire persister le chagement et la mutation de son état.
 
 ## Stack technologique exploitée
 >- Spring Boot,
@@ -14,20 +14,17 @@
 
 ## Capacités générales
 
-### Au *startup* de l'application, *messagerelay*
+### Au *startup*, *messagerelay*
 >- se connecte au cluster Kafka puis souscrit, en tant que consommateur, au topic de destination,
->- se positionne, pour chaque partition du topic, sur le dernier *offset* commité,
->- extrait le message localisé à cette *offset* pour en extraire le header nommé *outbox_id* et enfin y ajouter +1,
+>- se positionne, pour chaque partition de ce topic, sur le dernier *offset* commité,
+>- lit le message localisé à cette *offset* pour en extraire le header nommé *outbox_id* et y ajouter +1,
 >- considère cette valeur comme le prochain *outbox_id* à lire depuis la base-de-données.
 
----
 ### Toutes les N millisecondes, *messagerelay*
-
 >-  lit la ligne de base-de-donnéee dont le champ *id* est le prochain *outbox_id* à relayer vers le topic Kafka,
->- crée un nouveau message à partir de ces valeurs récupérées, 
->- y ajoute un header nommé *outobx_id*,
->- envoie ce message dans le topic.
-
+>- crée un nouveau message à partir des valeurs de la ligne lue,  
+>- y ajoute un header nommé *outobx_id*, dont la valeur est égale au champ *id*,
+>- relaye ce message dans le topic Kafka.
 
 ### Paramétrages
 ```properties
@@ -69,7 +66,6 @@ spring.jpa.hibernate.ddl-auto=none
 
 ## Traces applicatives au démarrage
 ```properties
-
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
@@ -206,16 +202,7 @@ spring.jpa.hibernate.ddl-auto=none
 
 ```
 
----
+
 ## Prochaines évolutions à adresser et planifier
->- Exploiter le Schema Registry,
->- *State Rebuilder*: au démarrage, l'application reconstitue ses états internes en traitant les messages à partir de l'offset 0 et jusqu'au prochain message précédemment non traitée, sans n'émettre aucun message dans les topics *sink*, 
->- *Graceful/clean shutdown*: l'application tente de terminer les traitements commencés, avant de s'éteindre gracieusement,
 >- Mettre en place le plugin maven [jib](https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin) pour générer l'image Docker et la publier dans azure docker registry,
->- La structure des tables SQL dynamiques est automatiquement déduite des schéma AVRO associés à chacun des topics *source*,
->- Exploiter les indicateurs qualité produits, pour mettre en place des quality-gate et un reporting,
->- Ecrire les tests automatisés,
->- Définir le schéma et la documentation du fichier de config YAML et le documenter,
->- Garantir l'exactly-once processing,
->- Ajouter des tirets aux ULID reçus en entrée pour les transformer en UUID, et disposer dans PostgreSQL d'une colonne de type UUID (actuellement, c'est un VARCHAR),
->- Les schémas de données contenant des éléments de type complexes (avec des relations 0,N) ne sont pas gérées: il faudrait le prévoir car les entités "plates" restent assez rares,
+>- Ecrire les tests automatisés avec postgresql et kafka embarqués.
