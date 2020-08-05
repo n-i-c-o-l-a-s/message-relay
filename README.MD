@@ -1,7 +1,5 @@
 <div align="center">
   <img src="/doc/logo.svg" width="10%" />
-  <img src="/doc/logo.svg" width="10%" />
-  <img src="/doc/logo.svg" width="10%" />
 </div>
 
 # *MESSAGE-RELAY*
