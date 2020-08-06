@@ -1,7 +1,7 @@
 # <span align="center"><img src="/doc/logo.svg" width="3%"/></span><span> message-relay <img src="https://circleci.com/gh/n-i-c-o-l-a-s/message-relay.svg?style=shield"/>
 
 ## Présentation générale
-> *messagerelay* est impliquée dans l'implémentation du *Pattern* d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. C'est une application technique et indépendante du Métier de l'entreprise qui est en charge de lire par intervalles de temps (*polling*) les lignes de la table *outbox* et de les relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications Métiers (microservices) en exploitant la meme transaction base-de-données que celle qui a permis de faire persister la mutation de son état, plutôt que d'envoyer elles-mêmes le message à destination du Topic Kafka.
+> *messagerelay* est impliquée dans l'implémentation du *Pattern* d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. C'est une application technique volontairement indépendante du Métier de l'entreprise et qui est en charge de lire par intervalles de temps (*polling*) les lignes de la table *outbox* pour ensuite les relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications Métiers (microservices) en exploitant la même transaction base-de-données que celle qui a permis de faire persister la mutation de son état. En effet, plutôt que d'envoyer eux-mêmes le message à destination du Topic Kafka, les microservices écrivent la clé et le message Kafka dans une table *outbox*.
 
 ## Stack technologique
 >- Spring-Boot,
@@ -20,24 +20,19 @@
 >- considère cette valeur comme le prochain *outbox_id* à lire depuis la base-de-données.
 
 ### Toutes les N millisecondes, *messagerelay*
->- vérifie la présence de l'arrivée d'une nouvelle de ligne dans la table *outbox*, ne considérant que l'id à traiter,
->- crée un nouveau message à partir des valeurs de la ligne lue,  
->- ajoute à ce message header personnalisé et nommé *outobx_id*, dont la valeur est égale au champ *id* de la table *outbox*,
+>- vérifie la présence de l'arrivée d'une nouvelle de ligne dans la table *outbox*, ne considérant que l'id courant à traiter,
+>- crée un nouveau message Kafka à partir des valeurs de la ligne lue,  
+>- ajoute à ce message un header personnalisé et nommé *outobx_id*, dont la valeur est égale au champ *id* de la table *outbox*,
 >- relaye ce message vers le topic Kafka.
 
 ### Coté base de données Postgres, *messagerelay*
->- doit faire l'objet de la création d'un role associé et dédié
->- n'est pas propriétaire de la table *outbox* et, contraitement au microservice qui écrit dedans, ne dispose que des droits de lecture et suppression,
- 
+>- doit faire l'objet de la création d'un role dédié
 ```sql
-CREATE TABLE public.outbox
-(
-    id bigserial NOT NULL,
-    key bytea NOT NULL,
-    value bytea NOT NULL,
-    CONSTRAINT outbox_pkey PRIMARY KEY (id)
-)
-
+CREATE ROLE messagerelay WITH LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION ENCRYPTED PASSWORD 'md54cf64e155ec4170d094ff99487216aa0';
+```
+>- s'attend à travailler avec la structure de table suivante 
+```sql
+CREATE TABLE public.outbox (id bigserial NOT NULL, key bytea NOT NULL, value bytea NOT NULL, CONSTRAINT outbox_pkey PRIMARY KEY (id));
 GRANT SELECT, DELETE ON TABLE public.outbox TO messagerelay;
 ```
 
