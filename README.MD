@@ -5,9 +5,8 @@
 
 ## Stack technologique exploitée
 >- Spring Boot,
+>- Spring Data JPA, pour l'accès à la base de données Postgres,
 >- Spring Kafka, pour la consommation et la production de messages Kafka, 
->- PostgreSQL, pour la base-de-données hébergeant l'état du microservice,
->- Kafka pour le Message-Broker,
 >- PMD, Findbug, CheckStyle, Jacoco, pour la qualimétrie,
 >- Maven 3.6.3, pour le *build* (3.5.0 minimum requis),
 >- Docker, pour la conteneurisation.
