@@ -1,7 +1,7 @@
 # <span align="center"><img src="/doc/logo.svg" width="3%"/></span><span> message-relay <img src="https://circleci.com/gh/n-i-c-o-l-a-s/message-relay.svg?style=shield"/>
 
 ## Présentation générale
-> *messagerelay* est impliquée dans l'implémentation du *Pattern* d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. C'est une application technique volontairement indépendante du Métier de l'entreprise et qui est en charge de lire par intervalles de temps (*polling*) les lignes de la table *outbox* pour ensuite les relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications Métiers (microservices) en exploitant la même transaction base-de-données que celle qui a permis de faire persister la mutation de son état. En effet, plutôt que d'envoyer eux-mêmes le message à destination du Topic Kafka, les microservices écrivent la clé et le message Kafka dans une table *outbox*.
+> *messagerelay* est impliquée dans l'implémentation du *Pattern* d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. C'est une application technique, volontairement indépendante du Métier de l'entreprise, qui est en charge de lire par intervalles de temps (*polling*) les lignes de la table *outbox* pour ensuite les relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications Métiers (microservices) en exploitant la même transaction base-de-données que celle qui a permis de faire persister la mutation de son état. En effet, plutôt que d'envoyer eux-mêmes le message à destination du Topic Kafka, les microservices écrivent la clé et le message Kafka dans une table *outbox*.
 
 ## Stack technologique
 >- Spring-Boot,
@@ -33,21 +33,24 @@ CREATE ROLE messagerelay WITH LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE 
 >- s'attend à travailler avec la structure de table suivante 
 ```sql
 CREATE TABLE public.outbox (id bigserial NOT NULL, key bytea NOT NULL, value bytea NOT NULL, CONSTRAINT outbox_pkey PRIMARY KEY (id));
+```
+>- doit dispoer des droits de lecture et suppression sur la table *outbox*
+```sql
 GRANT SELECT, DELETE ON TABLE public.outbox TO messagerelay;
 ```
 
 ### Paramétrages
 ```properties
-# below, properties related to messagerelay as kafka consumer
+# below, properties related to messagerelay as a kafka consumer
 messagerelay.kafka.bootstrapservers=localhost:9092
 messagerelay.kafka.groupid=entity-X-messagerelay
 messagerelay.kafka.topic=entity-X
 messagerelay.kafka.auto-offset-reset=earliest
-# properties related to messagerelay as kafka producer
+# properties related to messagerelay as a kafka producer
 spring.kafka.producer.bootstrap-servers=localhost:9092
 spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.ByteArraySerializer
 spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.ByteArraySerializer
-# below, properties related to message database connection
+# below, properties related to messagerelay as a database client
 messagerelay.db.poll.delay.in.ms=10
 spring.datasource.hikari.connectionTimeout=10000
 spring.datasource.hikari.maximumPoolSize=5
@@ -58,13 +61,14 @@ spring.jpa.generate-ddl=false
 spring.jpa.hibernate.ddl-auto=none
 ```
 
-### Quelques détails
+### Quelques détails techniques
 
 >- *messagerelay* considère la clé et la valeur du message à relayer comme des tableaux de bytes (byte []), lui permettant ainsi de pouvoir relayer tous formats de message (JSON, AVRO, XML, etc.),
+>- *messagerelay* n'est pas (encore) scalable : plusieurs instances de cette application ne peuvent pas se partage les travaux de relais.
 
 ---
 ## Execution sur poste local sans Docker
->- Les variables d'environnement suivantes sont nécessaires ```KAFKA_BOOTSTRAP_SERVER=localhost:9092``` et ```KAFKA_SCHEMA_REGISTRY_SERVER=http://localhost:8081```,
+>- Les variables d'environnement système suivantes sont nécessaires: ```KAFKA_BOOTSTRAP_SERVER=localhost:9092``` et ```KAFKA_SCHEMA_REGISTRY_SERVER=http://localhost:8081```,
 >- L'application est ensuite construite et packagée dans un JAR via la commande ```mvn clean package```,
 >- Puis, après avoir démarré Zookeeper et Kafka sur votre poste local, l'application se lance via la ligne de commande ```java -Duser.timezone=UTC -jar target/pds-1.5.0-SNAPSHOT.jar```.
 
