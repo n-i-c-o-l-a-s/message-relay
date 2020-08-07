@@ -5,9 +5,9 @@
 
 > *messagerelay* considère la clé et la valeur du message à relayer comme des tableaux d'octets (byte []), lui permettant ainsi de pouvoir relayer tous formats de message (JSON, AVRO, XML, etc.) avec n'importe quel *encoding*: le contenu est simplement relayé, et jamais décodé.
 
-> *messagerelay* n'est pas (encore?) scalable : plusieurs instances de cette application ne peuvent pas se partager les travaux de relais d'une même base de de données.
+> *messagerelay* n'est pas (encore?) scalable : plusieurs instances de cette application ne peuvent pas se partager les travaux de relais d'une même base-de-données.
 
- <span align="center"><img src="/doc/messagerelay-architecture.svg"/></span>
+ <div><span align="center"><img src="/doc/messagerelay-architecture.svg"/></span></div>
 
 ## Stack technologique
 >- Spring-Boot,
