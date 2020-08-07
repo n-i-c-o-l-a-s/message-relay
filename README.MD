@@ -107,8 +107,21 @@ docker build --build-arg VERSION=<VERSION> -t xxxxxxxxxx/messagerelay .
 ```
 
 ## Démonstration d'une exécution dans un environnement complet conteneurisé
+
 ``` sh
-docker-compose up -d  --build-arg VERSION=<VERSION> -t xxxxxxxxxx/messagerelay .
+cd src/test/containers
+```
+``` sh
+docker-compose up -d
+```
+``` sh
+Creating network "containers_default" with the default driver
+Creating zookeeper ... done
+Creating postgres  ... done
+Creating pgadmin4  ... done
+Creating broker    ... done
+Creating kafdrop      ... done
+Creating messagerelay ... done
 ```
 
 ## Execution sur poste local avec Docker
