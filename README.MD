@@ -108,7 +108,6 @@ docker build --build-arg VERSION=<VERSION> -t xxxxxxxxxx/messagerelay .
 
 ## Démonstration d'une exécution dans un environnement complet conteneurisé
 ``` sh
-cd sdsd
 docker-compose up -d  --build-arg VERSION=<VERSION> -t xxxxxxxxxx/messagerelay .
 ```
 
