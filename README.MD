@@ -123,14 +123,28 @@ Creating broker    ... done
 Creating kafdrop      ... done
 Creating messagerelay ... done
 ```
+``` sh
+docker-compose down --volumes
+```
+``` sh
+Stopping messagerelay ... done
+Stopping kafdrop      ... done
+Stopping broker       ... done
+Stopping postgres     ... done
+Stopping pgadmin4     ... done
+Stopping zookeeper    ... done
+Removing messagerelay ... done
+Removing kafdrop      ... done
+Removing broker       ... done
+Removing postgres     ... done
+Removing pgadmin4     ... done
+Removing zookeeper    ... done
+Removing network containers_default
+```
 
-## Execution sur poste local avec Docker
->- ```docker build --build-arg VERSION=1.5.0-SNAPSHOT -t pds .```
->- ```docker run -e 'KAFKA_BOOTSTRAP_SERVER=localhost:9092' -e 'KAFKA_SCHEMA_REGISTRY_SERVER=http://localhost:8081' pds```
-
-
-## Traces applicatives au démarrage
+## Traces applicatives au démarrage (*docker logs -f messagerelay*)
 ```properties
+
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
 ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
@@ -139,135 +153,214 @@ Creating messagerelay ... done
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::        (v2.3.2.RELEASE)
 
-2020-08-05 21:24:08.672  INFO 39720 --- [           main] c.s.a.m.MessageRelayApplication          : Starting MessageRelayApplication on LAPTOP-4CN8F2PR with PID 39720 (C:\dev\source\message-relay\target\classes started by nicol in C:\dev\source\message-relay)
-2020-08-05 21:24:08.677  INFO 39720 --- [           main] c.s.a.m.MessageRelayApplication          : No active profile set, falling back to default profiles: default
-2020-08-05 21:24:09.578  INFO 39720 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
-2020-08-05 21:24:09.675  INFO 39720 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 80ms. Found 1 JPA repository interfaces.
-2020-08-05 21:24:10.232  INFO 39720 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
-2020-08-05 21:24:10.243  INFO 39720 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
-2020-08-05 21:24:10.300  INFO 39720 --- [         task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2020-08-05 21:24:10.382  INFO 39720 --- [         task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.18.Final
-2020-08-05 21:24:10.608  INFO 39720 --- [           main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
-2020-08-05 21:24:10.683  INFO 39720 --- [         task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
-2020-08-05 21:24:11.145  INFO 39720 --- [         task-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2020-08-05 21:24:11.280  INFO 39720 --- [         task-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2020-08-05 21:24:11.324  INFO 39720 --- [         task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
-2020-08-05 21:24:12.089  INFO 39720 --- [         task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
-2020-08-05 21:24:12.099  INFO 39720 --- [         task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2020-08-05 21:24:12.339  INFO 39720 --- [           main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
-2020-08-05 21:24:12.347  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Finding the last commited offset from Kafka topic 'entity-X'
-2020-08-05 21:24:12.350  INFO 39720 --- [           main] c.s.a.m.MessageRelayApplication          : Started MessageRelayApplication in 4.304 seconds (JVM running for 5.074)
-2020-08-05 21:24:12.377  INFO 39720 --- [   scheduling-1] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
-	allow.auto.create.topics = true
-	auto.commit.interval.ms = 5000
-	auto.offset.reset = earliest
-	bootstrap.servers = [localhost:9092]
-	check.crcs = true
-	client.dns.lookup = default
-	client.id = 
-	client.rack = 
-	connections.max.idle.ms = 540000
-	default.api.timeout.ms = 60000
-	enable.auto.commit = true
-	exclude.internal.topics = true
-	fetch.max.bytes = 52428800
-	fetch.max.wait.ms = 500
-	fetch.min.bytes = 1
-	group.id = entity-X-messagerelay
-	group.instance.id = null
-	heartbeat.interval.ms = 1000
-	interceptor.classes = []
-	internal.leave.group.on.close = true
-	isolation.level = read_uncommitted
-	key.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
-	max.partition.fetch.bytes = 1048576
-	max.poll.interval.ms = 300000
-	max.poll.records = 500
-	metadata.max.age.ms = 300000
-	metric.reporters = []
-	metrics.num.samples = 2
-	metrics.recording.level = INFO
-	metrics.sample.window.ms = 30000
-	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor]
-	receive.buffer.bytes = 65536
-	reconnect.backoff.max.ms = 1000
-	reconnect.backoff.ms = 50
-	request.timeout.ms = 30000
-	retry.backoff.ms = 100
-	sasl.client.callback.handler.class = null
-	sasl.jaas.config = null
-	sasl.kerberos.kinit.cmd = /usr/bin/kinit
-	sasl.kerberos.min.time.before.relogin = 60000
-	sasl.kerberos.service.name = null
-	sasl.kerberos.ticket.renew.jitter = 0.05
-	sasl.kerberos.ticket.renew.window.factor = 0.8
-	sasl.login.callback.handler.class = null
-	sasl.login.class = null
-	sasl.login.refresh.buffer.seconds = 300
-	sasl.login.refresh.min.period.seconds = 60
-	sasl.login.refresh.window.factor = 0.8
-	sasl.login.refresh.window.jitter = 0.05
-	sasl.mechanism = GSSAPI
-	security.protocol = PLAINTEXT
-	security.providers = null
-	send.buffer.bytes = 131072
-	session.timeout.ms = 10000
-	ssl.cipher.suites = null
-	ssl.enabled.protocols = [TLSv1.2]
-	ssl.endpoint.identification.algorithm = https
-	ssl.key.password = null
-	ssl.keymanager.algorithm = SunX509
-	ssl.keystore.location = null
-	ssl.keystore.password = null
-	ssl.keystore.type = JKS
-	ssl.protocol = TLSv1.2
-	ssl.provider = null
-	ssl.secure.random.implementation = null
-	ssl.trustmanager.algorithm = PKIX
-	ssl.truststore.location = null
-	ssl.truststore.password = null
-	ssl.truststore.type = JKS
-	value.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+2020-08-05 19:31:13.999  INFO 1 --- [           main] c.s.a.m.MessageRelayApplication          : Starting MessageRelayApplication v1.0.0-SNAPSHOT on d73f21dcf42d with
+PID 1 (/app.jar started by spring in /)
+2020-08-05 19:31:14.016  INFO 1 --- [           main] c.s.a.m.MessageRelayApplication          : No active profile set, falling back to default profiles: default
+2020-08-05 19:31:17.240  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2020-08-05 19:31:17.488  INFO 1 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 202ms. Found 1 JPA reposit
+ory interfaces.
+2020-08-05 19:31:19.961  INFO 1 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2020-08-05 19:31:20.037  INFO 1 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2020-08-05 19:31:21.039  INFO 1 --- [         task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2020-08-05 19:31:21.879  INFO 1 --- [           main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2020-08-05 19:31:22.723  INFO 1 --- [         task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.18.Final
+2020-08-05 19:31:23.149  INFO 1 --- [         task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+2020-08-05 19:31:23.939  INFO 1 --- [         task-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2020-08-05 19:31:24.326  INFO 1 --- [         task-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2020-08-05 19:31:24.894  INFO 1 --- [         task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQL10Dialect
+2020-08-05 19:31:28.813  INFO 1 --- [         task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.tra
+nsaction.jta.platform.internal.NoJtaPlatform]
+2020-08-05 19:31:28.852  INFO 1 --- [         task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2020-08-05 19:31:29.527  INFO 1 --- [           main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2020-08-05 19:31:29.626  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Finding the last commited offset from Kafka topic 'messagerelay-groupi
+d'
+2020-08-05 19:31:29.630  INFO 1 --- [           main] c.s.a.m.MessageRelayApplication          : Started MessageRelayApplication in 18.029 seconds (JVM running for 20.
+788)
+2020-08-05 19:31:29.772  INFO 1 --- [   scheduling-1] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values:
+        allow.auto.create.topics = true
+        auto.commit.interval.ms = 5000
+        auto.offset.reset = earliest
+        bootstrap.servers = [broker:29092]
+        check.crcs = true
+        client.dns.lookup = default
+        client.id =
+        client.rack =
+        connections.max.idle.ms = 540000
+        default.api.timeout.ms = 60000
+        enable.auto.commit = true
+        exclude.internal.topics = true
+        fetch.max.bytes = 52428800
+        fetch.max.wait.ms = 500
+        fetch.min.bytes = 1
+        group.id = messagerelay-groupid
+        group.instance.id = null
+        heartbeat.interval.ms = 3000
+        interceptor.classes = []
+        internal.leave.group.on.close = true
+        isolation.level = read_uncommitted
+        key.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+        max.partition.fetch.bytes = 1048576
+        max.poll.interval.ms = 300000
+        max.poll.records = 500
+        metadata.max.age.ms = 300000
+        metric.reporters = []
+        metrics.num.samples = 2
+        metrics.recording.level = INFO
+        metrics.sample.window.ms = 30000
+        partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor]
+        receive.buffer.bytes = 65536
+        reconnect.backoff.max.ms = 1000
+        reconnect.backoff.ms = 50
+        request.timeout.ms = 30000
+        retry.backoff.ms = 100
+        sasl.client.callback.handler.class = null
+        sasl.jaas.config = null
+        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        sasl.kerberos.min.time.before.relogin = 60000
+        sasl.kerberos.service.name = null
+        sasl.kerberos.ticket.renew.jitter = 0.05
+        sasl.kerberos.ticket.renew.window.factor = 0.8
+        sasl.login.callback.handler.class = null
+        sasl.login.class = null
+        sasl.login.refresh.buffer.seconds = 300
+        sasl.login.refresh.min.period.seconds = 60
+        sasl.login.refresh.window.factor = 0.8
+        sasl.login.refresh.window.jitter = 0.05
+        sasl.mechanism = GSSAPI
+        security.protocol = PLAINTEXT
+        security.providers = null
+        send.buffer.bytes = 131072
+        session.timeout.ms = 10000
+        ssl.cipher.suites = null
+        ssl.enabled.protocols = [TLSv1.2]
+        ssl.endpoint.identification.algorithm = https
+        ssl.key.password = null
+        ssl.keymanager.algorithm = SunX509
+        ssl.keystore.location = null
+        ssl.keystore.password = null
+        ssl.keystore.type = JKS
+        ssl.protocol = TLSv1.2
+        ssl.provider = null
+        ssl.secure.random.implementation = null
+        ssl.trustmanager.algorithm = PKIX
+        ssl.truststore.location = null
+        ssl.truststore.password = null
+        ssl.truststore.type = JKS
+        value.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
 
-2020-08-05 21:24:12.663  INFO 39720 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
-2020-08-05 21:24:12.663  INFO 39720 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
-2020-08-05 21:24:12.663  INFO 39720 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1596655452662
-2020-08-05 21:24:12.666  INFO 39720 --- [   scheduling-1] o.a.k.clients.consumer.KafkaConsumer     : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Subscribed to topic(s): entity-X
-2020-08-05 21:24:12.906  INFO 39720 --- [   scheduling-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Cluster ID: rR4uGeZAT-ygUIYZKjIQ0g
-2020-08-05 21:24:12.907  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
-2020-08-05 21:24:12.910  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] (Re-)joining group
-2020-08-05 21:24:12.921  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Join group failed with org.apache.kafka.common.errors.MemberIdRequiredException: The group member needs to have a valid member id before actually entering a consumer group
-2020-08-05 21:24:12.921  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] (Re-)joining group
-2020-08-05 21:24:12.927  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Finished assignment for group at generation 9: {consumer-entity-X-messagerelay-1-5bf1ccff-b762-43c6-a3c3-33d5a22df639=Assignment(partitions=[entity-X-0, entity-X-1, entity-X-2])}
-2020-08-05 21:24:12.932  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Successfully joined group with generation 9
-2020-08-05 21:24:12.935  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Adding newly assigned partitions: entity-X-2, entity-X-1, entity-X-0
-2020-08-05 21:24:12.935  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Following partition(s) has been assigned [entity-X-2, entity-X-1, entity-X-0]
-2020-08-05 21:24:12.947  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Setting offset for partition entity-X-2 to the committed offset FetchPosition{offset=3, offsetEpoch=Optional[0], currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}
-2020-08-05 21:24:12.948  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Setting offset for partition entity-X-1 to the committed offset FetchPosition{offset=4, offsetEpoch=Optional[0], currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}
-2020-08-05 21:24:12.948  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Setting offset for partition entity-X-0 to the committed offset FetchPosition{offset=5, offsetEpoch=Optional[0], currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}
-2020-08-05 21:24:14.672  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Next offset to fetch in partition 0 would be 5
-2020-08-05 21:24:14.673  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Inspecting the offset before last (4) of partition 0 in order to extract 'outbox_id' header
-2020-08-05 21:24:14.673  INFO 39720 --- [   scheduling-1] o.a.k.clients.consumer.KafkaConsumer     : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Seeking to offset 4 for partition entity-X-0
-2020-08-05 21:24:14.674  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Next offset to fetch in partition 1 would be 4
-2020-08-05 21:24:14.675  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Inspecting the offset before last (3) of partition 1 in order to extract 'outbox_id' header
-2020-08-05 21:24:14.675  INFO 39720 --- [   scheduling-1] o.a.k.clients.consumer.KafkaConsumer     : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Seeking to offset 3 for partition entity-X-1
-2020-08-05 21:24:14.675  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Next offset to fetch in partition 2 would be 3
-2020-08-05 21:24:14.676  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Inspecting the offset before last (2) of partition 2 in order to extract 'outbox_id' header
-2020-08-05 21:24:14.676  INFO 39720 --- [   scheduling-1] o.a.k.clients.consumer.KafkaConsumer     : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Seeking to offset 2 for partition entity-X-2
-2020-08-05 21:24:15.215  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Record found: topic='entity-X', partition='2', offset='2' 
-2020-08-05 21:24:15.218  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Extracted 'outbox_id' header: 9
-2020-08-05 21:24:15.219  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Record found: topic='entity-X', partition='1', offset='3' 
-2020-08-05 21:24:15.219  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Extracted 'outbox_id' header: 12
-2020-08-05 21:24:15.219  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Record found: topic='entity-X', partition='0', offset='4' 
-2020-08-05 21:24:15.219  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Extracted 'outbox_id' header: 11
-2020-08-05 21:24:15.234  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Revoke previously assigned partitions entity-X-2, entity-X-1, entity-X-0
-2020-08-05 21:24:15.235  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Following partition(s) has been revoked [entity-X-2, entity-X-1, entity-X-0]
-2020-08-05 21:24:15.235  INFO 39720 --- [   scheduling-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-entity-X-messagerelay-1, groupId=entity-X-messagerelay] Member consumer-entity-X-messagerelay-1-5bf1ccff-b762-43c6-a3c3-33d5a22df639 sending LeaveGroup request to coordinator localhost:9092 (id: 2147483646 rack: null) due to the consumer is being closed
-2020-08-05 21:24:15.267  INFO 39720 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Next id to poll from database is 13
+2020-08-05 19:31:30.419  INFO 1 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2020-08-05 19:31:30.425  INFO 1 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2020-08-05 19:31:30.425  INFO 1 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1596655890412
+2020-08-05 19:31:30.432  INFO 1 --- [   scheduling-1] o.a.k.clients.consumer.KafkaConsumer     : [Consumer clientId=consumer-messagerelay-groupid-1, groupId=messagerel
+ay-groupid] Subscribed to topic(s): messagerelay-groupid
+2020-08-05 19:31:34.444  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : No record found in topic messagerelay-groupid
+2020-08-05 19:31:34.473  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Next id to poll from database is 1
+2020-08-05 19:31:34.676  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=1, key=[49], value=[49]] has been polled
+2020-08-05 19:31:34.687  INFO 1 --- [   scheduling-1] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values:
+        acks = 1
+        batch.size = 16384
+        bootstrap.servers = [broker:29092]
+        buffer.memory = 33554432
+        client.dns.lookup = default
+        client.id = producer-1
+        compression.type = none
+        connections.max.idle.ms = 540000
+        delivery.timeout.ms = 120000
+        enable.idempotence = false
+        interceptor.classes = []
+        key.serializer = class org.apache.kafka.common.serialization.ByteArraySerializer
+        linger.ms = 0
+        max.block.ms = 60000
+        max.in.flight.requests.per.connection = 5
+        max.request.size = 1048576
+        metadata.max.age.ms = 300000
+        metadata.max.idle.ms = 300000
+        metric.reporters = []
+        metrics.num.samples = 2
+        metrics.recording.level = INFO
+        metrics.sample.window.ms = 30000
+        partitioner.class = class org.apache.kafka.clients.producer.internals.DefaultPartitioner
+        receive.buffer.bytes = 32768
+        reconnect.backoff.max.ms = 1000
+        reconnect.backoff.ms = 50
+        request.timeout.ms = 30000
+        retries = 2147483647
+        retry.backoff.ms = 100
+        sasl.client.callback.handler.class = null
+        sasl.jaas.config = null
+        sasl.kerberos.kinit.cmd = /usr/bin/kinit
+        sasl.kerberos.min.time.before.relogin = 60000
+        sasl.kerberos.service.name = null
+        sasl.kerberos.ticket.renew.jitter = 0.05
+        sasl.kerberos.ticket.renew.window.factor = 0.8
+        sasl.login.callback.handler.class = null
+        sasl.login.class = null
+        sasl.login.refresh.buffer.seconds = 300
+        sasl.login.refresh.min.period.seconds = 60
+        sasl.login.refresh.window.factor = 0.8
+        sasl.login.refresh.window.jitter = 0.05
+        sasl.mechanism = GSSAPI
+        security.protocol = PLAINTEXT
+        security.providers = null
+        send.buffer.bytes = 131072
+        ssl.cipher.suites = null
+        ssl.enabled.protocols = [TLSv1.2]
+        ssl.endpoint.identification.algorithm = https
+        ssl.key.password = null
+        ssl.keymanager.algorithm = SunX509
+        ssl.keystore.location = null
+        ssl.keystore.password = null
+        ssl.keystore.type = JKS
+        ssl.protocol = TLSv1.2
+        ssl.provider = null
+        ssl.secure.random.implementation = null
+        ssl.trustmanager.algorithm = PKIX
+        ssl.truststore.location = null
+        ssl.truststore.password = null
+        ssl.truststore.type = JKS
+        transaction.timeout.ms = 60000
+        transactional.id = null
+        value.serializer = class org.apache.kafka.common.serialization.ByteArraySerializer
 
+2020-08-05 19:31:34.756  INFO 1 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2020-08-05 19:31:34.756  INFO 1 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2020-08-05 19:31:34.756  INFO 1 --- [   scheduling-1] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1596655894756
+2020-08-05 19:31:34.788  INFO 1 --- [ad | producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=producer-1] Cluster ID: WteaqqB3Rci_XsyXrfi5Ww
+2020-08-05 19:31:34.823  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 1 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.837  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=2, key=[50], value=[50]] has been polled
+2020-08-05 19:31:34.849  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 2 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.864  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=3, key=[51], value=[51]] has been polled
+2020-08-05 19:31:34.865  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 3 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.879  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=4, key=[52], value=[52]] has been polled
+2020-08-05 19:31:34.880  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 4 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.896  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=5, key=[53], value=[53]] has been polled
+2020-08-05 19:31:34.902  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 5 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.918  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=6, key=[54], value=[54]] has been polled
+2020-08-05 19:31:34.919  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 6 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.932  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=7, key=[55], value=[55]] has been polled
+2020-08-05 19:31:34.933  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 7 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.947  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=8, key=[56], value=[56]] has been polled
+2020-08-05 19:31:34.948  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 8 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.961  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=9, key=[57], value=[57]] has been polled
+2020-08-05 19:31:34.961  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 9 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.974  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=10, key=[49, 48], value=[49, 48]] has been polled
+2020-08-05 19:31:34.974  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 10 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:34.987  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=11, key=[49, 49], value=[49, 49]] has been polled
+2020-08-05 19:31:34.987  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 11 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:35.001  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=12, key=[49, 50], value=[49, 50]] has been polled
+2020-08-05 19:31:35.001  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 12 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:35.014  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=13, key=[49, 51], value=[49, 51]] has been polled
+2020-08-05 19:31:35.015  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 13 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:35.028  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=14, key=[49, 52], value=[49, 52]] has been polled
+2020-08-05 19:31:35.029  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 14 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:35.042  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=15, key=[49, 53], value=[49, 53]] has been polled
+2020-08-05 19:31:35.042  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 15 has been successfully relayed to topic messagerelay-groupid
+2020-08-05 19:31:35.059  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : Outbox [id=16, key=[49, 54], value=[49, 54]] has been polled
+2020-08-05 19:31:35.060  INFO 1 --- [   scheduling-1] c.s.a.messagerelay.OutboxPoller          : id 16 has been successfully relayed to topic messagerelay-groupid
 ```
 
 
 ## Prochaines évolutions à adresser et planifier
->- Mettre en place le plugin maven [jib](https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin) pour générer l'image Docker et la publier dans azure docker registry,
->- Ecrire les tests automatisés avec postgresql et kafka embarqués.
+>- Mettre en place le plugin maven [jib](https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin) pour générer l'image Docker et la publier sur dockerhub,
+>- Ecrire les tests automatisés avec postgresql et kafka embarqués,
+>- Utiliser *jasypt* pour ne plus écrire le mot de passe *postgres* en clair dans un fichier appartenant au repository des sources.
