@@ -21,11 +21,15 @@
 >- lit le message localisé à cet *offset* pour en extraire le header nommé *outbox_id* et y ajouter la valeur 1,
 >- considère cette valeur comme le prochain *outbox_id* à lire depuis la base-de-données.
 
-### Toutes les N millisecondes, *messagerelay*
+### A intervalles de temps réguliers et configurables, *messagerelay*
 >- vérifie la présence de l'arrivée d'une nouvelle de ligne dans la table *outbox*, ne considérant que l'id courant à traiter: *messagerelay* garantie un ordre identique entre l'insertion des lignes dans la table *outbox* et l'insertion dans le Topic Kafka,
 >- crée un nouveau message Kafka à partir des valeurs de la ligne lue,  
 >- y ajoute un header personnalisé nommé *outobx_id*, dont la valeur est égale au champ *id* de la table *outbox*,
->- relaye ce message vers le topic Kafka.
+>- relaye ce message vers le topic Kafka,
+>- et enfin considère cet *outbox_id* comme le dernier traité avec succès.
+
+### A intervalles de temps réguliers et configurables, *messagerelay*
+>- supprime de la table *outbox_id* toutes les lignes dont la valeur du champ *id* est inférieur à la valeur du dernier *outbox_id* traité avec succès.
 
 ### Coté base de données Postgres, *messagerelay*
 >- doit idéalement faire l'objet de la création d'un user/role Postgres dédié
