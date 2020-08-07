@@ -18,17 +18,17 @@
 ### Au *startup*, *messagerelay*
 >- se connecte au cluster Kafka puis souscrit, en tant que consommateur, au topic de destination,
 >- positionne son curseur de consommation, pour chaque partition assignée, sur le dernier *offset* commité,
->- lit le message localisé à cette *offset* pour en extraire le header nommé *outbox_id* et y ajouter +1,
+>- lit le message localisé à cet *offset* pour en extraire le header nommé *outbox_id* et y ajouter la valeur 1,
 >- considère cette valeur comme le prochain *outbox_id* à lire depuis la base-de-données.
 
 ### Toutes les N millisecondes, *messagerelay*
->- vérifie la présence de l'arrivée d'une nouvelle de ligne dans la table *outbox*, ne considérant que l'id courant à traiter,
+>- vérifie la présence de l'arrivée d'une nouvelle de ligne dans la table *outbox*, ne considérant que l'id courant à traiter: *messagerelay* garantie un ordre identique entre l'insertion des lignes dans la table *outbox* et l'insertion dans le Topic Kafka,
 >- crée un nouveau message Kafka à partir des valeurs de la ligne lue,  
->- ajoute à ce message un header personnalisé et nommé *outobx_id*, dont la valeur est égale au champ *id* de la table *outbox*,
+>- y ajoute un header personnalisé nommé *outobx_id*, dont la valeur est égale au champ *id* de la table *outbox*,
 >- relaye ce message vers le topic Kafka.
 
 ### Coté base de données Postgres, *messagerelay*
->- doit faire l'objet de la création d'un user/role Postgres dédié
+>- doit idéalement faire l'objet de la création d'un user/role Postgres dédié
 ```sql
 CREATE ROLE messagerelay WITH LOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION ENCRYPTED PASSWORD 'md54cf64e155ec4170d094ff99487216aa0';
 ```
@@ -44,35 +44,40 @@ GRANT SELECT, DELETE ON TABLE public.outbox TO messagerelay;
 ### Paramétrages
 ```properties
 # below, properties related to messagerelay as a kafka consumer
-messagerelay.kafka.bootstrapservers=localhost:9092
-messagerelay.kafka.groupid=entity-X-messagerelay
-messagerelay.kafka.topic=entity-X
+messagerelay.kafka.bootstrapservers=${KAFKA_BOOTSTRAP_SERVERS}
+messagerelay.kafka.groupid=${ENTITY_NAME}-messagerelay
+messagerelay.kafka.topic=${TOPIC_NAME}
 messagerelay.kafka.auto-offset-reset=earliest
 # properties related to messagerelay as a kafka producer
-spring.kafka.producer.bootstrap-servers=localhost:9092
+spring.kafka.producer.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVERS}
 spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.ByteArraySerializer
 spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.ByteArraySerializer
 # below, properties related to messagerelay as a database client
 messagerelay.db.poll.delay.in.ms=10
 spring.datasource.hikari.connectionTimeout=10000
 spring.datasource.hikari.maximumPoolSize=5
-spring.datasource.url=jdbc:postgresql://localhost:5432/any_microservice_state_db
-spring.datasource.username=messagerelay
-spring.datasource.password=01EEJMXE4VXFNBGV86VVJS8DV3
+spring.datasource.url=jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRESQL_DB}
+spring.datasource.username=${POSTGRESQL_USER}
+spring.datasource.password=${POSTGRESQL_PWD}
 spring.jpa.generate-ddl=false
 spring.jpa.hibernate.ddl-auto=none
 ```
-
 ### Quelques détails techniques
 
->- *messagerelay* considère la clé et la valeur du message à relayer comme des tableaux de bytes (byte []), lui permettant ainsi de pouvoir relayer tous formats de message (JSON, AVRO, XML, etc.),
->- *messagerelay* n'est pas (encore) scalable : plusieurs instances de cette application ne peuvent pas se partage les travaux de relais.
+>- *messagerelay* considère la clé et la valeur du message à relayer comme des tableaux de bytes (byte []), lui permettant ainsi de pouvoir relayer tous formats de message (JSON, AVRO, XML, etc.): le contenu est simplement relayé, et jamais décodé,
+>- *messagerelay* n'est pas (encore) scalable : plusieurs instances de cette application ne peuvent pas se partager les travaux de relais sur une même base de de données
+>- Les variables d'environnement suivantes sont nécessaires: ```KAFKA_BOOTSTRAP_SERVERS```, ```ENTITY_NAME```,  ```TOPIC_NAME```,  ```POSTGRESQL_HOST```,  ```POSTGRESQL_PORT```,  ```POSTGRESQL_DB```.
 
----
-## Execution sur poste local sans Docker
->- Les variables d'environnement système suivantes sont nécessaires: ```KAFKA_BOOTSTRAP_SERVER=localhost:9092``` et ```KAFKA_SCHEMA_REGISTRY_SERVER=http://localhost:8081```,
->- L'application est ensuite construite et packagée dans un JAR via la commande ```mvn clean package```,
->- Puis, après avoir démarré Zookeeper et Kafka sur votre poste local, l'application se lance via la ligne de commande ```java -Duser.timezone=UTC -jar target/pds-1.5.0-SNAPSHOT.jar```.
+## Compilation Maven et création de l'image Docker
+>- L'application est construite et packagée dans un JAR via la commande ```mvn clean package```
+``` sh
+mvn clean package
+```
+
+>- Elle est ensuite Dockerisée via la commande ```docker build --build-arg VERSION=1.0.0 -t messagrelay .```, en positionnant la version souhaitée,
+
+## Création d'un environnement locale conteneurisé
+>- le fichier est disponible pour démontrer l'exécution de messagerelay mais aussi pour effetuer quelques tests manuels,
 
 ---
 ## Execution sur poste local avec Docker
