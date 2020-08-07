@@ -1,6 +1,14 @@
 ---
 version: '3.8'
 services:
+
+  messagerelay:
+    container_name: messagerelay
+    image: nicolaschambon/messagerelay
+    depends_on:
+      - postgres
+      - broker
+
   postgres:
     container_name: postgres
     image: postgres
@@ -10,8 +18,6 @@ services:
       POSTGRES_DB: any_microservice_state_db
     ports:
       - "5432:5432"
-    networks:
-      - postgres
     volumes:
       - ./postgres-config.sql:/docker-entrypoint-initdb.d/postgres-config.sql
   
@@ -23,9 +29,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "8000:80"
-    networks:
-      - postgres
-#  command: python /pgadmin4/setup.py --load-servers /config.json
+    volumes:
+      - ./pgadmin4-config.json:/pgadmin4/servers.json
 
   zookeeper:
     image: confluentinc/cp-zookeeper
@@ -75,7 +80,3 @@ services:
       - "9000:9000"
     environment:
       KAFKA_BROKERCONNECT: 'broker:29092'
-
-networks:
-  postgres:
-    driver: bridge
