@@ -49,7 +49,7 @@ CREATE TABLE public.outbox (id bigserial NOT NULL, key bytea NOT NULL, value byt
 GRANT SELECT, DELETE ON TABLE public.outbox TO messagerelay;
 ```
 
-### Paramétrages
+### Paramétrages (fichier src/main/resources/application.properties
 ```properties
 # below, properties related to messagerelay as a kafka consumer
 messagerelay.kafka.bootstrapservers=${KAFKA_BOOTSTRAP_SERVERS}
@@ -69,15 +69,6 @@ spring.datasource.username=${POSTGRESQL_USER}
 spring.datasource.password=${POSTGRESQL_PWD}
 spring.jpa.generate-ddl=false
 spring.jpa.hibernate.ddl-auto=none
-```
-## Compilation Maven et création de l'image Docker (standard)
-
-``` sh
-mvn clean package
-```
-
-``` sh
-docker build --build-arg VERSION=<VERSION> -t xxxxxxxxxx/messagrelay .
 ```
 
 ## Variables d'environnement à positionner
@@ -106,8 +97,20 @@ POSTGRESQL_USER # le nom d'utilisateur pour se connecter à la base-de-données
 ``` properties
 POSTGRESQL_PWD # le mot de passe de connexion à la base-de-données
 ```
+## Compilation Maven et création de l'image Docker (standard)
 
-## Démonstration d'exécution dans un environnement complet conteneurisé
+``` sh
+mvn clean package
+```
+``` sh
+docker build --build-arg VERSION=<VERSION> -t xxxxxxxxxx/messagerelay .
+```
+
+## Démonstration d'une exécution dans un environnement complet conteneurisé
+``` sh
+cd sdsd
+docker-compose up -d  --build-arg VERSION=<VERSION> -t xxxxxxxxxx/messagerelay .
+```
 
 ## Execution sur poste local avec Docker
 >- ```docker build --build-arg VERSION=1.5.0-SNAPSHOT -t pds .```
