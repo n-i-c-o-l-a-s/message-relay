@@ -93,9 +93,6 @@ public class OutboxPoller {
 		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
 				org.apache.kafka.common.serialization.ByteArrayDeserializer.class);
 
-		
-		// TODO added heartbeat intervall and session timeout shortened
-		
 		final Consumer<byte[], byte[]> consumer = new KafkaConsumer<>(props);
 		consumer.subscribe(Arrays.asList(new String[] { topic }), new ConsumerRebalanceListener() {
 
@@ -121,7 +118,7 @@ public class OutboxPoller {
 
 					if (nextOffsetToFetch > 0) {
 						LOG.info(
-								"Inspecting the offset before last ({}) of partition {} in order to extract 'outbox_id' header",
+								"Inspecting the offset before-last ({}) from the partition {} in order to extract 'outbox_id' header",
 								nextOffsetToFetch - 1, topicPartition.partition());
 						consumer.seek(topicPartition, nextOffsetToFetch - 1);
 					} else {
@@ -145,11 +142,11 @@ public class OutboxPoller {
 				}
 			}
 
-			consumer.close();
-
 		} else {
 			LOG.info("No record found in topic {}", this.topic);
 		}
+
+		consumer.close();
 
 		nextIdToPollFromDatabase++;
 		LOG.info("Next id to poll from database is {}", nextIdToPollFromDatabase);
