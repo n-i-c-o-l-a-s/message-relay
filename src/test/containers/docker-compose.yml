@@ -5,6 +5,15 @@ services:
   messagerelay:
     container_name: messagerelay
     image: nicolaschambon/messagerelay
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: broker:29092
+      KAFKA_GROUP_ID: messagerelay-groupid
+      KAFKA_TOPIC_NAME: messagerelay-groupid
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_DB: any_microservice_state_db
+      POSTGRESQL_USER: admin
+      POSTGRESQL_PWD: admin
     depends_on:
       - postgres
       - broker
