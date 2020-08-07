@@ -70,7 +70,6 @@ spring.datasource.password=${POSTGRESQL_PWD}
 spring.jpa.generate-ddl=false
 spring.jpa.hibernate.ddl-auto=none
 ```
-
 ## Compilation Maven et création de l'image Docker (standard)
 
 ``` sh
@@ -78,36 +77,38 @@ mvn clean package
 ```
 
 ``` sh
-docker build --build-arg VERSION=1.0.0 -t messagrelay .
-```, en positionnant la version souhaitée,
+docker build --build-arg VERSION=<VERSION> -t xxxxxxxxxx/messagrelay .
+```
 
-## Création d'un environnement locale conteneurisé
->- le fichier est disponible pour démontrer l'exécution de messagerelay mais aussi pour effetuer quelques tests manuels,
->- Les variables d'environnement suivantes sont nécessaires: 
+## Variables d'environnement à positionner
 
 ``` properties 
 KAFKA_BOOTSTRAP_SERVERS # l'hote et le port hébergeant le broker Kafka, par exemple 10.34.2.2:9092 ou broker:29092
 ```
-
 ``` properties
-GROUP_ID # le nom du groupe de consommateur Kafak que messagerelay rejoindra, par client-messagerelay ou account-messagerelay
-```
-
-``` properties
-TOPIC_NAME # le nom du Topic Kafka dansa le quel messagerelay va consommer et produire des messages
+KAFKA_GROUP_ID # le nom du groupe de consommateur Kafka que messagerelay rejoindra
 ```
 ``` properties
-POSTGRESQL_HOST # le nom de l'hote hébergeant le serveur Postgresql, par exemple 10.45.33.121 ou postgresql.mydomain.com
+KAFKA_GROUP_ID # le nom du Topic Kafka dansa le quel messagerelay va consommer et produire des messages
+```
+``` properties
+KAFKA_GROUP_ID # le nom de l'hote hébergeant le serveur Postgresql, par exemple 10.45.33.121 ou postgresql.mydomain.com
 ```
 ``` properties
 POSTGRESQL_PORT # le port de l'hote hébergeant le serveur Postgresql, par exemple 5432
 ```
-
 ``` properties
 POSTGRESQL_DB # le nom de la base-de-données hébergeant la table outbox, par exemple CLIENT_DB ou ACCOUNT_DB
 ```
+``` properties
+POSTGRESQL_USER # le nom d'utilisateur pour se connecter à la base-de-données
+```
+``` properties
+POSTGRESQL_PWD # le mot de passe de connexion à la base-de-données
+```
 
----
+## Démonstration d'exécution dans un environnement complet conteneurisé
+
 ## Execution sur poste local avec Docker
 >- ```docker build --build-arg VERSION=1.5.0-SNAPSHOT -t pds .```
 >- ```docker run -e 'KAFKA_BOOTSTRAP_SERVER=localhost:9092' -e 'KAFKA_SCHEMA_REGISTRY_SERVER=http://localhost:8081' pds```
