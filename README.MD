@@ -3,6 +3,10 @@
 ## Présentation générale
 > *messagerelay* est une application impliquée dans l'implémentation du *Pattern* d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. Volontairement indépendante du Métier de l'entreprise, l'application *messagerelay* est en charge de lire par intervalles de temps (*polling*) les lignes de la table *outbox* pour ensuite les relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications Métiers (microservices) en exploitant la même transaction base-de-données que celle qui a permis de persister la mutation de son état. En effet, plutôt que d'envoyer eux-mêmes le message à destination du Topic Kafka, les microservices écrivent la clé et le message Kafka dans une table *outbox*.
 
+> *messagerelay* considère la clé et la valeur du message à relayer comme des tableaux d'octets (byte []), lui permettant ainsi de pouvoir relayer tous formats de message (JSON, AVRO, XML, etc.) avec n'importe quel *encoding*: le contenu est simplement relayé, et jamais décodé.
+
+> *messagerelay* n'est pas (encore?) scalable : plusieurs instances de cette application ne peuvent pas se partager les travaux de relais d'une même base de de données.
+
  <span align="center"><img src="/doc/messagerelay-architecture.svg"/></span>
 
 ## Stack technologique
@@ -29,7 +33,7 @@
 >- et enfin considère cet *outbox_id* comme le dernier traité avec succès.
 
 ### A intervalles de temps réguliers et configurables, *messagerelay*
->- supprime de la table *outbox_id* toutes les lignes dont la valeur du champ *id* est inférieur à la valeur du dernier *outbox_id* traité avec succès.
+>- supprime de la table *outbox_id* toutes les lignes dont la valeur du champ *id* est inférieure à la valeur du dernier *outbox_id* traité avec succès.
 
 ### Coté base de données Postgres, *messagerelay*
 >- doit idéalement faire l'objet de la création d'un user/role Postgres dédié
@@ -66,19 +70,16 @@ spring.datasource.password=${POSTGRESQL_PWD}
 spring.jpa.generate-ddl=false
 spring.jpa.hibernate.ddl-auto=none
 ```
-### Quelques détails techniques
 
->- *messagerelay* considère la clé et la valeur du message à relayer comme des tableaux de bytes (byte []), lui permettant ainsi de pouvoir relayer tous formats de message (JSON, AVRO, XML, etc.): le contenu est simplement relayé, et jamais décodé,
->- *messagerelay* n'est pas (encore) scalable : plusieurs instances de cette application ne peuvent pas se partager les travaux de relais sur une même base de de données
->-
+## Compilation Maven et création de l'image Docker (standard)
 
-## Compilation Maven et création de l'image Docker
->- L'application est construite et packagée dans un JAR via la commande ```mvn clean package```
 ``` sh
 mvn clean package
 ```
 
->- Elle est ensuite Dockerisée via la commande ```docker build --build-arg VERSION=1.0.0 -t messagrelay .```, en positionnant la version souhaitée,
+``` sh
+docker build --build-arg VERSION=1.0.0 -t messagrelay .
+```, en positionnant la version souhaitée,
 
 ## Création d'un environnement locale conteneurisé
 >- le fichier est disponible pour démontrer l'exécution de messagerelay mais aussi pour effetuer quelques tests manuels,
