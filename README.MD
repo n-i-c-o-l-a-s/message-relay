@@ -3,7 +3,7 @@
 ## Présentation générale
 > *messagerelay* est une application impliquée dans l'implémentation du *Pattern* d'architecture nommé *[Transactional Outbox](https://microservices.io/patterns/data/transactional-outbox.html)*. Volontairement indépendante du Métier de l'entreprise, l'application *messagerelay* est en charge de lire par intervalles de temps (*polling*) les lignes de la table *outbox* pour ensuite les relayer dans un topic Kafka. Ces lignes ont été précedemment insérées par les applications Métiers (microservices) en exploitant la même transaction base-de-données que celle qui a permis de persister la mutation de son état. En effet, plutôt que d'envoyer eux-mêmes le message à destination du Topic Kafka, les microservices écrivent la clé et le message Kafka dans une table *outbox*.
 
- <span align="center"><img src="/doc/messagerelay-architecture.png" width="150%"/></span>
+ <span align="center"><img src="/doc/messagerelay-architecture.png"/></span>
 
 ## Stack technologique
 >- Spring-Boot,
