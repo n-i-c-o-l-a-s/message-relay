@@ -45,7 +45,7 @@ GRANT SELECT, DELETE ON TABLE public.outbox TO messagerelay;
 ```properties
 # below, properties related to messagerelay as a kafka consumer
 messagerelay.kafka.bootstrapservers=${KAFKA_BOOTSTRAP_SERVERS}
-messagerelay.kafka.groupid=${ENTITY_NAME}-messagerelay
+messagerelay.kafka.groupid=${GROUP_ID}
 messagerelay.kafka.topic=${TOPIC_NAME}
 messagerelay.kafka.auto-offset-reset=earliest
 # properties related to messagerelay as a kafka producer
@@ -66,7 +66,7 @@ spring.jpa.hibernate.ddl-auto=none
 
 >- *messagerelay* considère la clé et la valeur du message à relayer comme des tableaux de bytes (byte []), lui permettant ainsi de pouvoir relayer tous formats de message (JSON, AVRO, XML, etc.): le contenu est simplement relayé, et jamais décodé,
 >- *messagerelay* n'est pas (encore) scalable : plusieurs instances de cette application ne peuvent pas se partager les travaux de relais sur une même base de de données
->- Les variables d'environnement suivantes sont nécessaires: ```KAFKA_BOOTSTRAP_SERVERS```, ```ENTITY_NAME```,  ```TOPIC_NAME```,  ```POSTGRESQL_HOST```,  ```POSTGRESQL_PORT```,  ```POSTGRESQL_DB```.
+>-
 
 ## Compilation Maven et création de l'image Docker
 >- L'application est construite et packagée dans un JAR via la commande ```mvn clean package```
@@ -78,6 +78,29 @@ mvn clean package
 
 ## Création d'un environnement locale conteneurisé
 >- le fichier est disponible pour démontrer l'exécution de messagerelay mais aussi pour effetuer quelques tests manuels,
+>- Les variables d'environnement suivantes sont nécessaires: 
+
+``` properties 
+KAFKA_BOOTSTRAP_SERVERS # l'hote et le port hébergeant le broker Kafka, par exemple 10.34.2.2:9092 ou broker:29092
+```
+
+``` properties
+GROUP_ID # le nom du groupe de consommateur Kafak que messagerelay rejoindra, par client-messagerelay ou account-messagerelay
+```
+
+``` properties
+TOPIC_NAME # le nom du Topic Kafka dansa le quel messagerelay va consommer et produire des messages
+```
+``` properties
+POSTGRESQL_HOST # le nom de l'hote hébergeant le serveur Postgresql, par exemple 10.45.33.121 ou postgresql.mydomain.com
+```
+``` properties
+POSTGRESQL_PORT # le port de l'hote hébergeant le serveur Postgresql, par exemple 5432
+```
+
+``` properties
+POSTGRESQL_DB # le nom de la base-de-données hébergeant la table outbox, par exemple CLIENT_DB ou ACCOUNT_DB
+```
 
 ---
 ## Execution sur poste local avec Docker
