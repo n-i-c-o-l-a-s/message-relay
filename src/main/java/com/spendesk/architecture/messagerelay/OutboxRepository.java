@@ -4,4 +4,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface OutboxRepository extends CrudRepository<Outbox, Long> {
 
+	public void deleteByIdLessThanEqual(Long id);
 }

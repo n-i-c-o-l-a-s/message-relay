@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
+import javax.transaction.Transactional;
+
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
@@ -62,6 +64,7 @@ public class OutboxPoller {
 	}
 
 	@Scheduled(fixedDelayString = "#{delayBetweenDatabasePolls}")
+	@Transactional
 	public void pollOutboxTableFromDatabase() {
 
 		if (isFirstRunScheduled) {
@@ -158,6 +161,10 @@ public class OutboxPoller {
 		headers.add(new RecordHeader("outbox_id", id.toString().getBytes()));
 		this.messageProducer.send(new ProducerRecord<byte[], byte[]>(this.topic, null, null, key, value, headers));
 		LOG.info("id {} has been successfully relayed to topic {}", id, this.topic);
+	}
+
+	public Long nextIdToPollFromDatabase() {
+		return this.nextIdToPollFromDatabase;
 	}
 
 }
