@@ -50,11 +50,11 @@ GRANT SELECT, DELETE ON TABLE public.outbox TO messagerelay;
 ```
 
 ### Paramétrages (fichier src/main/resources/application.properties
-```properties
+```
 # below, properties related to messagerelay as a kafka consumer
 messagerelay.kafka.bootstrapservers=${KAFKA_BOOTSTRAP_SERVERS}
-messagerelay.kafka.groupid=${GROUP_ID}
-messagerelay.kafka.topic=${TOPIC_NAME}
+messagerelay.kafka.groupid=${KAFKA_GROUP_ID}
+messagerelay.kafka.topic=${KAFKA_TOPIC_NAME}
 messagerelay.kafka.auto-offset-reset=earliest
 # properties related to messagerelay as a kafka producer
 spring.kafka.producer.bootstrap-servers=${KAFKA_BOOTSTRAP_SERVERS}
@@ -62,6 +62,7 @@ spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.ByteA
 spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.ByteArraySerializer
 # below, properties related to messagerelay as a database client
 messagerelay.db.poll.delay.in.ms=10
+messagerelay.db.purify.delay.in.ms=10000
 spring.datasource.hikari.connectionTimeout=10000
 spring.datasource.hikari.maximumPoolSize=5
 spring.datasource.url=jdbc:postgresql://${POSTGRESQL_HOST}:${POSTGRESQL_PORT}/${POSTGRESQL_DB}
