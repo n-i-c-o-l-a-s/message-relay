@@ -49,8 +49,8 @@ CREATE TABLE public.outbox (id bigserial NOT NULL, key bytea NOT NULL, value byt
 GRANT SELECT, DELETE ON TABLE public.outbox TO messagerelay;
 ```
 
-### Paramétrages (fichier src/main/resources/application.properties
-```
+### Paramétrages *([application.properties](src/main/resources/application.properties))*
+``` properties
 # below, properties related to messagerelay as a kafka consumer
 messagerelay.kafka.bootstrapservers=${KAFKA_BOOTSTRAP_SERVERS}
 messagerelay.kafka.groupid=${KAFKA_GROUP_ID}
